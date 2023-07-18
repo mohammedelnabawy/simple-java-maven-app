@@ -6,7 +6,7 @@ pipeline {
     }
 
     environment {
-        NUXUS_URL = 'http://ec2-44-204-197-127.compute-1.amazonaws.com:5000'
+        NUXUS_URL = 'ec2-44-204-197-127.compute-1.amazonaws.com:5000'
     }
 
     stages {
