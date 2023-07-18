@@ -4,10 +4,24 @@ pipeline {
         maven 'mvn'
         jdk 'jdk'
     }
+
+    environment {
+        NUXUS_URL = 'http://ec2-44-204-197-127.compute-1.amazonaws.com:5000'
+    }
+
     stages {
         stage("maven build"){
             steps {
                 sh 'mvn -DskipTests install'
+            }
+        }
+        stage("build docker file"){
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'nexus_credentials',usernameVariable: 'NEXUS_USERNAME',passwordVariable: 'NEXUS_PASS')]){
+                  sh 'docker build -t ${env.NUXUS_URL}/repository/docker-repo/simple-java-app:latest .'
+                  sh 'docker login ${env.NUXUS_URL} -u ${NEXUS_USERNAME}  -p ${NEXUS_PASS}'
+                  sh 'docker push ${env.NUXUS_URL}/repository/docker-repo/simple-java-app:latest'
+                }
             }
         }
     }
